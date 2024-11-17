@@ -1,17 +1,17 @@
+// Файл с функциями для работы с карточками
+
 // темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
-// DOM узел списка карточек
-const placesList = document.querySelector('.places__list');
-
 // функция создания карточки
-function createCard(cardData, deleteCard) {
+export function createCard(cardData, deleteCard) {
   const cardElement = cardTemplate.cloneNode(true);
   const cardTitle = cardElement.querySelector('.card__title');
   const cardImage = cardElement.querySelector('.card__image');
 
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
+  cardImage.alt = cardData.name;
 
   const cardDeleteButton = cardElement.querySelector('.card__delete-button');
   cardDeleteButton.addEventListener('click', function(evt) {
@@ -23,12 +23,6 @@ function createCard(cardData, deleteCard) {
 }
 
 // функция удаления карточки
-function deleteCard(cardToDelete) {
+export function deleteCard(cardToDelete) {
   cardToDelete.remove();
 }
-
-// вывод всех карточек на страницу
-initialCards.forEach((cardData) => {
-  const cardElement = createCard(cardData, deleteCard);
-  placesList.append(cardElement);
-});
