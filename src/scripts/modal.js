@@ -3,24 +3,26 @@
 // Функция открытия модельного окна
 export function openModal(popup) {
   popup.classList.add('popup_is-opened');
-  popup.addEventListener('mousedown', overlayClick);
-  document.addEventListener('keydown', escapePress);
+  popup.addEventListener('mousedown', handleOverlayClick);
+  document.addEventListener('keydown', handleEscapePress);
 }
 
 // Функция закрытия модельного окна
 export function closeModal(popup) {
   popup.classList.remove('popup_is-opened');
-  popup.removeEventListener('mousedown', overlayClick);
-  document.removeEventListener('keydown', escapePress);
+  popup.removeEventListener('mousedown', handleOverlayClick);
+  document.removeEventListener('keydown', handleEscapePress);
 }
 
 // Функция-обработчик клика на оверлей
-function overlayClick(event) {
-  closeModal(event.target);
+function handleOverlayClick(event) {
+  if(event.target == event.currentTarget) {
+    closeModal(event.target);
+  }
 }
 
 // Функция-обработчик нажатия на Escape
-function escapePress(event) {
+function handleEscapePress(event) {
   if(event.key === 'Escape') {
     const openedPopup = document.querySelector('.popup_is-opened');
     closeModal(openedPopup);

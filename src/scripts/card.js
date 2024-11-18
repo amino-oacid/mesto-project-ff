@@ -1,6 +1,6 @@
 // Файл с функциями для работы с карточками
 
-// темплейт карточки
+// Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
 
 // функция создания карточки
@@ -14,16 +14,14 @@ export function createCard(cardData, openImagePopup, likeCardCallback = likeCard
   cardTitle.textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
-  cardImage.addEventListener('click', openImagePopup);
+  cardImage.addEventListener('click', () => openImagePopup(cardData));
 
   cardDeleteButton.addEventListener('click', function(evt) {
     const cardToDelete = evt.target.closest('.card');
     deleteCardCallback(cardToDelete);
   });
 
-  cardLikeButton.addEventListener('click', function(evt) {
-    likeCardCallback(cardLikeButton);
-  });
+  cardLikeButton.addEventListener('click', () => likeCardCallback(cardLikeButton));
 
   return cardElement;
 }
