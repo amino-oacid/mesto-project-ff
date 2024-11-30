@@ -4,6 +4,7 @@ import './pages/index.css';
 import { createCard } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import { initialCards } from './scripts/cards.js';
+import { validationConfig, enableValidation, clearValidation } from './scripts/validation.js';
 
 // DOM элементы списка карточек, всех форм документа и всех кнопок-крестиков
 const placesList = document.querySelector('.places__list');
@@ -36,6 +37,7 @@ profilePopupEditButton.addEventListener('click', function(evt) {
   openModal(profilePopup);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
+  clearValidation(profileForm, validationConfig);
 });
 
 // Добавление слушателя для редактирования профиля
@@ -52,6 +54,7 @@ function handleProfileFormSubmit(event) {
 // Добавление слушателя для открытия формы новой карточки по клику
 newCardPopupAddButton.addEventListener('click', function(evt) {
   openModal(newCardPopup);
+  clearValidation(newCardForm, validationConfig);
 });
 
 // Добавление слушателя для добавления новой карточки
@@ -93,3 +96,5 @@ function renderCard(cardData, method = "prepend") {
 initialCards.forEach((cardData) => {
   renderCard(cardData, "append");
 });
+
+enableValidation(validationConfig);
