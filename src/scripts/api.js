@@ -113,27 +113,3 @@ export function changeUserAvatar(avatarLink) {
       return res.json();
     });
 }
-
-/*
-
-export function changeAvatar(avatarLink) {
-  return request('/users/me/avatar', {
-    method: 'PATCH',
-    body: JSON.stringify({
-      avatar: avatarLink,
-    }),
-  });
-}
-
-export function validateImageUrl(url) {
-  const urlPattern = /\.(jpeg|jpg|gif|png)$/i;
-  if (!urlPattern.test(url)) {
-    console.error('Неверный формат URL изображения');
-    return Promise.reject('Invalid image URL format');
-  }
-  return fetch(url, { method: 'HEAD', mode: 'no-cors' })
-    .then((response) => response.ok)
-}
-
-
-*/

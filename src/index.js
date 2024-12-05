@@ -1,7 +1,7 @@
 // Основной файл
 
 import './pages/index.css';
-import { createCard, renderLoading } from './scripts/card.js';
+import { createCard } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import { validationConfig, enableValidation, clearValidation } from './scripts/validation.js';
 import { getInitialCards, getUserInfo, editProfile, addCard, changeUserAvatar } from './scripts/api.js';
@@ -143,3 +143,12 @@ Promise.all([getUserInfo(), getInitialCards()])
   .catch((err) => {
     console.log(err);
   });
+
+// Функция процесса загрузки
+function renderLoading(isLoading, button, buttonText='Сохранить', loadingText='Сохранение...') {
+  if(isLoading) {
+    button.textContent = loadingText;
+  } else {
+    button.textContent = buttonText;
+  }
+}

@@ -29,7 +29,6 @@ export function createCard(cardData, profileId, openImagePopup, likeCardCallback
   cardLikeButton.addEventListener('click', () => likeCardCallback(cardLikeButton, likeCounter, cardId));
 
   if (cardData.owner._id !== profileId) {
-    console.log('не моя карта');
     cardDeleteButton.classList.add('card__delete-button-unactive');
   } else {
     cardDeleteButton.addEventListener('click', () => {
@@ -54,6 +53,7 @@ function likeCard(cardLikeButton, likeCounter, cardId) {
     });
 }
 
+// Функция процесса загрузки
 export function renderLoading(isLoading, button, buttonText='Сохранить', loadingText='Сохранение...') {
   if(isLoading) {
     button.textContent = loadingText;
