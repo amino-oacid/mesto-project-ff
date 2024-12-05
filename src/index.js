@@ -1,10 +1,10 @@
 // Основной файл
 
 import './pages/index.css';
-import { createCard } from './scripts/card.js';
+import { createCard, renderLoading } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
-import { initialCards } from './scripts/cards.js';
 import { validationConfig, enableValidation, clearValidation } from './scripts/validation.js';
+import { getInitialCards, getUserInfo, editProfile, addCard, changeUserAvatar } from './scripts/api.js';
 
 // DOM элементы списка карточек, всех форм документа и всех кнопок-крестиков
 const placesList = document.querySelector('.places__list');
@@ -13,6 +13,8 @@ const closeButtons = document.querySelectorAll('.popup__close');
 // DOM элементы профиля
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image-picture');
+let profileId;
 // DOM элементы для открытия модального окна с изображением
 const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupFull = imagePopup.querySelector('.popup__image');
@@ -31,6 +33,12 @@ const profileForm = forms['edit-profile'];
 const profileFormElements = profileForm.elements;
 const nameInput = profileFormElements['name'];
 const jobInput = profileFormElements['description'];
+// DOM элементы для открытия модального окна с формой обновления аватара пользователя
+const avatarChangeButton = document.querySelector('.profile__image');
+const avatarChangePopup = document.querySelector('.popup_type_avatar');
+const avatarChangeForm = forms['change-avatar'];
+const avatarChangeFormElements = avatarChangeForm.elements;
+const avatarInput = avatarChangeFormElements['avatar-link'];
 
 // Добавление слушателя для открытия формы редактирования профиля по клику
 profilePopupEditButton.addEventListener('click', function(evt) {
@@ -46,9 +54,36 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 // Функция-обработчик редактирования профиля
 function handleProfileFormSubmit(event) {
   event.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
-  closeModal(profilePopup);
+  renderLoading(true, event.submitter);
+  editProfile(nameInput.value, jobInput.value)
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModal(profilePopup);
+    })
+    .finally(() => renderLoading(false, event.submitter))
+    
+}
+
+// Добавление слушателя для открытия формы обновления аватара по клику
+avatarChangeButton.addEventListener('click', function(evt) {
+  openModal(avatarChangePopup);
+  clearValidation(avatarChangeForm, validationConfig);
+});
+
+// Добавление слушателя для обновления аватара
+avatarChangeForm.addEventListener('submit', handleChangeAvatarSubmit);
+
+// Функция-обработчик обновления аватара
+function handleChangeAvatarSubmit(event) {
+  event.preventDefault();
+  renderLoading(true, event.submitter);
+  changeUserAvatar(avatarInput.value)
+    .then((res) => {
+      profileImage.src = res.avatar;
+      closeModal(avatarChangePopup);
+    })
+    .finally(() => renderLoading(false, event.submitter))
 }
 
 // Добавление слушателя для открытия формы новой карточки по клику
@@ -63,13 +98,14 @@ newCardForm.addEventListener('submit', handleNewCardFormSubmit);
 // Функция-обработчик добавления новой карточки
 function handleNewCardFormSubmit(event) {
   event.preventDefault();
-  const newCardData = {
-    name: cardNameInput.value,
-    link: cardLinkInput.value,
-  };
-  renderCard(newCardData, "prepend");
-  newCardForm.reset();
-  closeModal(newCardPopup);
+  renderLoading(true, event.submitter);
+  addCard(cardNameInput.value, cardLinkInput.value)
+    .then((cardData) => {
+      renderCard(cardData, profileId, "prepend");
+      newCardForm.reset();
+      closeModal(newCardPopup);
+    }) 
+    .finally(() => renderLoading(false, event.submitter))
 }
 
 // Функция открытия попапа с изображением
@@ -87,14 +123,23 @@ closeButtons.forEach((button) => {
 });
 
 // Функция для вставки карточек на страницу с указанием метода вставки
-function renderCard(cardData, method = "prepend") {
-  const cardElement = createCard(cardData, openImagePopup);
+function renderCard(cardData, profileId, method = "prepend") {
+  const cardElement = createCard(cardData, profileId, openImagePopup);
   placesList[ method ](cardElement);
 }
 
-// Вывод всех карточек на страницу
-initialCards.forEach((cardData) => {
-  renderCard(cardData, "append");
-});
-
 enableValidation(validationConfig);
+
+Promise.all([getUserInfo(), getInitialCards()])
+  .then(([userData, initialCards]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImage.src = userData.avatar;
+    profileId = userData._id;
+    initialCards.forEach((cardData) => {
+      renderCard(cardData, profileId, "append");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

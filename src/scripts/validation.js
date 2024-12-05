@@ -1,3 +1,5 @@
+// Файл с функциями для валидации форм
+
 export const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
