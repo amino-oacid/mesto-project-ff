@@ -14,7 +14,7 @@ function showInputError(formElement, inputElement, errorMessage) {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.add(validationConfig.inputErrorClass);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add('popup__error_visible');
+  errorElement.classList.add(validationConfig.errorClass);
 }
 
 // Функция скрытия ошибки
@@ -41,7 +41,7 @@ function isValid(formElement, inputElement) {
 }
 
 // Функция добавления слушателя всем полям ввода для их валидации
-function setEventListeners(formElement, config = validationConfig) {
+function setEventListeners(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
   inputList.forEach((inputElement) => {
@@ -70,22 +70,26 @@ function hasInvalidInput(inputList) {
 // Функция переключения кнопки
 function toggleButtonState(inputList, buttonElement, inactiveButtonClass) {
   if(hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(inactiveButtonClass);
+    disableButton(buttonElement, inactiveButtonClass);
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(inactiveButtonClass);
   }
 }
 
+// Функция дизейбла кнопки
+function disableButton(button, inactivateClass) {
+  button.classList.add(inactivateClass);
+  button.disabled = true;
+}
+
 // Функция очистки ошибок валидации форм
-export function clearValidation(formElement, config = validationConfig) {
+export function clearValidation(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement);
     inputElement.setCustomValidity("");
   });
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
+  disableButton(buttonElement, validationConfig.inactiveButtonClass);
 }

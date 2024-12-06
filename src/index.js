@@ -5,6 +5,7 @@ import { createCard } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import { validationConfig, enableValidation, clearValidation } from './scripts/validation.js';
 import { getInitialCards, getUserInfo, editProfile, addCard, changeUserAvatar } from './scripts/api.js';
+import { handleSubmit } from './scripts/utils.js';
 
 // DOM элементы списка карточек, всех форм документа и всех кнопок-крестиков
 const placesList = document.querySelector('.places__list');
@@ -53,16 +54,18 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 
 // Функция-обработчик редактирования профиля
 function handleProfileFormSubmit(event) {
-  event.preventDefault();
-  renderLoading(true, event.submitter);
-  editProfile(nameInput.value, jobInput.value)
+  function makeRequest() {
+    return editProfile(nameInput.value, jobInput.value)
     .then((userData) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
       closeModal(profilePopup);
     })
-    .finally(() => renderLoading(false, event.submitter))
-    
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  handleSubmit(makeRequest, event);
 }
 
 // Добавление слушателя для открытия формы обновления аватара по клику
@@ -76,14 +79,17 @@ avatarChangeForm.addEventListener('submit', handleChangeAvatarSubmit);
 
 // Функция-обработчик обновления аватара
 function handleChangeAvatarSubmit(event) {
-  event.preventDefault();
-  renderLoading(true, event.submitter);
-  changeUserAvatar(avatarInput.value)
+  function makeRequest() {
+    return changeUserAvatar(avatarInput.value)
     .then((res) => {
       profileImage.src = res.avatar;
       closeModal(avatarChangePopup);
     })
-    .finally(() => renderLoading(false, event.submitter))
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  handleSubmit(makeRequest, event);
 }
 
 // Добавление слушателя для открытия формы новой карточки по клику
@@ -97,15 +103,18 @@ newCardForm.addEventListener('submit', handleNewCardFormSubmit);
 
 // Функция-обработчик добавления новой карточки
 function handleNewCardFormSubmit(event) {
-  event.preventDefault();
-  renderLoading(true, event.submitter);
-  addCard(cardNameInput.value, cardLinkInput.value)
+  function makeRequest() {
+    return addCard(cardNameInput.value, cardLinkInput.value)
     .then((cardData) => {
       renderCard(cardData, profileId, "prepend");
       newCardForm.reset();
       closeModal(newCardPopup);
-    }) 
-    .finally(() => renderLoading(false, event.submitter))
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  handleSubmit(makeRequest, event);
 }
 
 // Функция открытия попапа с изображением
@@ -143,12 +152,3 @@ Promise.all([getUserInfo(), getInitialCards()])
   .catch((err) => {
     console.log(err);
   });
-
-// Функция процесса загрузки
-function renderLoading(isLoading, button, buttonText='Сохранить', loadingText='Сохранение...') {
-  if(isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = buttonText;
-  }
-}

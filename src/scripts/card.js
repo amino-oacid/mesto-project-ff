@@ -1,6 +1,6 @@
 // Файл с функциями для работы с карточками
 
-import { changeLikeStatus, deleteCard } from "./api";
+import { changeLikeStatus, deleteCard } from "./api.js";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -32,8 +32,13 @@ export function createCard(cardData, profileId, openImagePopup, likeCardCallback
     cardDeleteButton.classList.add('card__delete-button-unactive');
   } else {
     cardDeleteButton.addEventListener('click', () => {
-      deleteCardCallback(cardId);
-      cardDeleteButton.closest('.places__item').remove();
+      deleteCardCallback(cardId)
+        .then(() => {
+          cardDeleteButton.closest('.places__item').remove();
+        })
+        .catch((err) => {
+          console.log(err);
+        })      
     });
   }
 
@@ -51,13 +56,4 @@ function likeCard(cardLikeButton, likeCounter, cardId) {
     .catch((err) => {
       console.log(err);
     });
-}
-
-// Функция процесса загрузки
-export function renderLoading(isLoading, button, buttonText='Сохранить', loadingText='Сохранение...') {
-  if(isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = buttonText;
-  }
 }
