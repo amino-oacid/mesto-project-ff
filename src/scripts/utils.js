@@ -31,7 +31,7 @@ export function handleSubmit(request, event, loadingText = 'Сохранение
       event.target.reset();
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
     })
     .finally(() => {
       renderLoading(false, submitButton, initialText);
