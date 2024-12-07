@@ -60,9 +60,6 @@ function handleProfileFormSubmit(event) {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
       closeModal(profilePopup);
-    })
-    .catch((err) => {
-      console.log(err);
     });
   }
   handleSubmit(makeRequest, event);
@@ -84,9 +81,6 @@ function handleChangeAvatarSubmit(event) {
     .then((res) => {
       profileImage.src = res.avatar;
       closeModal(avatarChangePopup);
-    })
-    .catch((err) => {
-      console.log(err);
     });
   }
   handleSubmit(makeRequest, event);
@@ -107,11 +101,7 @@ function handleNewCardFormSubmit(event) {
     return addCard(cardNameInput.value, cardLinkInput.value)
     .then((cardData) => {
       renderCard(cardData, profileId, "prepend");
-      newCardForm.reset();
       closeModal(newCardPopup);
-    })
-    .catch((err) => {
-      console.log(err);
     });
   }
   handleSubmit(makeRequest, event);
